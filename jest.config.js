@@ -1,5 +1,3 @@
-require('@testing-library/jest-dom/extend-expect')
-
 module.exports = {
   verbose: true,
   transform: {
