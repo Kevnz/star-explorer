@@ -31,13 +31,6 @@ jobs:
       - run:
           name: Test
           command: npm test
-      - run:
-          name: E2E Test
-          command: npm run test:e2e
-      - store_test_results:
-          path: ~/forge/reports
-      - store_artifacts:
-          path: ~/forge/reports
 
   build:
     executor: node
@@ -59,6 +52,33 @@ jobs:
       - run:
           name: Build
           command: npm run build
+
+  buildFinal:
+    executor: build-machine
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - run: rm -rf node_modules
+      - run: rm -r build
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - run: rm -rf node_modules
+      - run: rm -r build
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - run: rm -rf node_modules
+      - run: rm -r build
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - run: rm -rf node_modules
+      - run: rm -r build
+      - checkout
+      - run: npm install
+      - run: npm run build
 
   deploy:
     executor: node
@@ -92,6 +112,11 @@ workflows:
       - buildOld:
           requires:
             - test
+      - buildFinal:
+          requires:
+            - build
+            - buildOld
+
   nightly:
     triggers:
       - schedule:
@@ -137,6 +162,10 @@ workflows:
       - buildOld:
           requires:
             - test
+      - buildFinal:
+          requires:
+            - build
+            - buildOld
   jump:
     triggers:
       - schedule:
@@ -153,3 +182,7 @@ workflows:
       - buildOld:
           requires:
             - test
+      - buildFinal:
+          requires:
+            - build
+            - buildOld
